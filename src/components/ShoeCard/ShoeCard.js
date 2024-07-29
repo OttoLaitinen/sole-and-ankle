@@ -4,6 +4,7 @@ import styled from "styled-components/macro";
 import { COLORS, WEIGHTS } from "../../constants";
 import { formatPrice, pluralize, isNewShoe } from "../../utils";
 import Spacer from "../Spacer";
+import { css } from "styled-components";
 
 const ShoeCard = ({
   slug,
@@ -40,17 +41,27 @@ const ShoeCard = ({
         <Spacer size={12} />
         <Row>
           <Name>{name}</Name>
-          <Price>{formatPrice(price)}</Price>
+          <Price variant={variant}>{formatPrice(price)}</Price>
         </Row>
         <Row>
           <ColorInfo>{pluralize("Color", numOfColors)}</ColorInfo>
+          {variant === "on-sale" ? (
+            <SalePrice>{formatPrice(salePrice)}</SalePrice>
+          ) : null}
         </Row>
       </Wrapper>
+
+      {variant === "new-release" ? (
+        <NewRelease>Just released!</NewRelease>
+      ) : null}
+
+      {variant === "on-sale" ? <OnSale>Sale</OnSale> : null}
     </Link>
   );
 };
 
 const Link = styled.a`
+  position: relative;
   text-decoration: none;
   color: inherit;
   flex: 1 1 340px;
@@ -82,7 +93,14 @@ const Name = styled.h3`
   color: ${COLORS.gray[900]};
 `;
 
-const Price = styled.span``;
+const Price = styled.span`
+  ${(props) =>
+    props.variant === "on-sale" &&
+    css`
+      text-decoration: line-through;
+      color: ${COLORS.gray[700]};
+    `}
+`;
 
 const ColorInfo = styled.p`
   color: ${COLORS.gray[700]};
@@ -91,6 +109,24 @@ const ColorInfo = styled.p`
 const SalePrice = styled.span`
   font-weight: ${WEIGHTS.medium};
   color: ${COLORS.primary};
+`;
+
+const CardFlag = styled.div`
+  position: absolute;
+  top: 12px;
+  right: -4px;
+  background-color: ${COLORS.secondary};
+  color: ${COLORS.white};
+  padding: 8px 12px;
+  border-radius: 2px;
+  font-weight: ${WEIGHTS.bold};
+`;
+
+const NewRelease = styled(CardFlag)``;
+
+const OnSale = styled(CardFlag)`
+  background-color: ${COLORS.primary};
+  color: ${COLORS.white};
 `;
 
 export default ShoeCard;
